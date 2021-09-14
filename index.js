@@ -44,7 +44,33 @@ const rootQuery = new GraphQLObjectType({
   }),
 });
 
-const gqlSchema = new GraphQLSchema({ query: rootQuery });
+const mutation = new GraphQLObjectType({
+  name: "mutation",
+  fields: () => ({
+    createUser: {
+      type: userType,
+      args: {
+        firstName: { type: GraphQLString },
+        lastName: { type: GraphQLString },
+        email: { type: GraphQLString },
+        password: { type: GraphQLString },
+      },
+      resolve(parent, args) {
+        // return "lksdf";
+        userData.push({
+          id: userData.length + 1,
+          firstName: args.firstName,
+          lastName: args.lastName,
+          email: args.email,
+          password: args.password,
+        });
+        return { ...args, id: userData.length + 1 };
+      },
+    },
+  }),
+});
+
+const gqlSchema = new GraphQLSchema({ query: rootQuery, mutation: mutation });
 app.use(
   "/graphql",
   expressGraphQL({
