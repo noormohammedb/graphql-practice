@@ -9,7 +9,19 @@ const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLInt,
+  GraphQLList,
 } = require("graphql");
+
+const userType = new GraphQLObjectType({
+  name: "user",
+  fields: () => ({
+    id: { type: GraphQLInt },
+    firstName: { type: GraphQLString },
+    lastName: { type: GraphQLString },
+    email: { type: GraphQLString },
+    password: { type: GraphQLString },
+  }),
+});
 
 const rootQuery = new GraphQLObjectType({
   name: "helloworld",
@@ -25,8 +37,13 @@ const rootQuery = new GraphQLObjectType({
       type: GraphQLInt,
       resolve: () => 4,
     },
+    getAllUser: {
+      type: new GraphQLList(userType),
+      resolve: () => userData,
+    },
   }),
 });
+
 const gqlSchema = new GraphQLSchema({ query: rootQuery });
 app.use(
   "/graphql",
