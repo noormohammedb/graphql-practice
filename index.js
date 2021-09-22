@@ -41,6 +41,20 @@ const rootQuery = new GraphQLObjectType({
       type: new GraphQLList(userType),
       resolve: () => userData,
     },
+    getUserById: {
+      type: userType,
+      args: {
+        id: { type: GraphQLInt },
+      },
+      resolve(root, args) {
+        console.info("args:", args);
+        console.log(userData.find((item) => item.id == args.id));
+        return userData.find((item) => item.id == args.id);
+      },
+      // resolve: (parent, args) => {
+      //   return args.id;
+      // },
+    },
   }),
 });
 
