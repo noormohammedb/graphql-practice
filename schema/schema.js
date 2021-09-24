@@ -21,8 +21,7 @@ const BookType = new GraphQLObjectType({
     authorId: { type: GraphQLInt },
     author: {
       type: AuthorType,
-      // args:
-      resolve: (parent, args) => {
+      resolve: (parent) => {
         console.info("Book Type author resolve parent:", parent);
         return authorData.find((iterator) => parent.authorId == iterator.id);
       },
@@ -37,6 +36,15 @@ const AuthorType = new GraphQLObjectType({
     name: { type: GraphQLString },
     // age: { type: GraphQLInt },
     age: { type: GraphQLInt },
+    book: {
+      type: GraphQLList(BookType),
+      // type: BookType,
+      resolve: (parent) => {
+        return BookData.filter(
+          (BookIterator) => parent.id == BookIterator.authorId
+        );
+      },
+    },
   }),
 });
 
