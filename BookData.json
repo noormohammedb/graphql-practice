@@ -1,12 +1,12 @@
 [
   {
     "id": "1",
-    "name": "potter",
+    "name": "harry",
     "gener": "lorem"
   },
   {
     "id": "2",
-    "name": "harry",
-    "gener": "lorem"
+    "name": "potter",
+    "gener": "ipsum"
   }
 ]

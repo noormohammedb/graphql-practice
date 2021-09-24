@@ -1,8 +1,7 @@
-const graphql = require("graphql");
+const gql = require("graphql");
 const BookData = require("../BookData.json");
 
-const { GraphQLObjectType, GraphQLList, GraphQLSchema, GraphQLString } =
-  graphql;
+const { GraphQLObjectType, GraphQLList, GraphQLSchema, GraphQLString } = gql;
 
 const BookType = new GraphQLObjectType({
   name: "Book",
@@ -18,7 +17,8 @@ const RootQuery = new GraphQLObjectType({
   fields: {
     book: {
       type: BookType,
-      args: { id: { type: GraphQLString } },
+      args: { id: { type: gql.GraphQLInt } },
+      // args: { id: { type: GraphQLString } },
       resolve: (parent, args) => {
         const book = BookData.find((iterator) => iterator.id == args.id);
         console.log(book);
