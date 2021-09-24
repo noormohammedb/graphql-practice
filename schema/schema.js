@@ -18,6 +18,15 @@ const BookType = new GraphQLObjectType({
     // id: { type: GraphQLString },
     name: { type: GraphQLString },
     gener: { type: GraphQLString },
+    authorId: { type: GraphQLInt },
+    author: {
+      type: AuthorType,
+      // args:
+      resolve: (parent, args) => {
+        console.info("Book Type author resolve parent:", parent);
+        return authorData.find((iterator) => parent.authorId == iterator.id);
+      },
+    },
   }),
 });
 
@@ -40,8 +49,7 @@ const RootQuery = new GraphQLObjectType({
       // args: { id: { type: GraphQLInt } },
       // args: { id: { type: GraphQLString } },
       resolve: (parent, args) => {
-        console.info("args.id:", args.id);
-        console.log(typeof args.id);
+        console.info("book Query args.id:", args.id, typeof args.id);
         const book = BookData.find((iterator) => iterator.id == args.id);
         console.log(book);
         return book;
@@ -50,7 +58,7 @@ const RootQuery = new GraphQLObjectType({
     books: {
       type: new GraphQLList(BookType),
       resolve: () => {
-        console.log(typeof BookData);
+        console.info("Books Query", typeof BookData);
         return BookData;
       },
     },

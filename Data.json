@@ -3,12 +3,20 @@
     {
       "id": "1",
       "name": "harry",
-      "gener": "lorem"
+      "gener": "lorem",
+      "authorId": "1"
     },
     {
       "id": "2",
       "name": "potter",
-      "gener": "ipsum"
+      "gener": "ipsum",
+      "authorId": "2"
+    },
+    {
+      "id": "3",
+      "name": "game of throns",
+      "gener": "dollor",
+      "authorId": "3"
     }
   ],
   "authorData": [
@@ -21,6 +29,11 @@
       "id": 2,
       "name": "patric",
       "age": 33
+    },
+    {
+      "id": 3,
+      "name": "David",
+      "age": 68
     }
   ]
 }
