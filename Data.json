@@ -1,0 +1,26 @@
+{
+  "BookData": [
+    {
+      "id": "1",
+      "name": "harry",
+      "gener": "lorem"
+    },
+    {
+      "id": "2",
+      "name": "potter",
+      "gener": "ipsum"
+    }
+  ],
+  "authorData": [
+    {
+      "id": 1,
+      "name": "Brandon",
+      "age": 48
+    },
+    {
+      "id": 2,
+      "name": "patric",
+      "age": 33
+    }
+  ]
+}

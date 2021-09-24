@@ -14,5 +14,7 @@ app.use(
 );
 
 app.listen(port, () => {
-  console.log(`server listening on :${port}`);
+  console.log(
+    `${new Date().toLocaleTimeString("hh-mm")} server listening on :${port}`
+  );
 });
