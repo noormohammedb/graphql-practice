@@ -1,6 +1,8 @@
 const gql = require("graphql");
 const { BookData, authorData } = require("../Data.json");
 
+const { db } = require("../database");
+
 const {
   GraphQLObjectType,
   GraphQLList,
@@ -37,7 +39,7 @@ const AuthorType = new GraphQLObjectType({
     // age: { type: GraphQLInt },
     age: { type: GraphQLInt },
     book: {
-      type: GraphQLList(BookType),
+      type: new GraphQLList(BookType),
       // type: BookType,
       resolve: (parent) => {
         return BookData.filter(
@@ -84,6 +86,32 @@ const RootQuery = new GraphQLObjectType({
   },
 });
 
+const Mutation = new GraphQLObjectType({
+  name: "Mutation",
+  fields: {
+    addBook: {
+      type: BookType,
+      args: {
+        name: { type: GraphQLString },
+        gener: { type: GraphQLString },
+        authorId: { type: GraphQLInt },
+      },
+      resolve: async (parent, args) => {
+        try {
+          const dbResult = await db.collection("book").insertOne({ ...args });
+          console.info("dbResult:", dbResult);
+          return { ...args, id: dbResult.insertedId.toString() };
+        } catch (dbInsertationError) {
+          console.log("DB Insertation Error in Book Mutation");
+          console.error(dbInsertationError);
+          return new Error();
+        }
+      },
+    },
+  },
+});
+
 module.exports = new GraphQLSchema({
   query: RootQuery,
+  mutation: Mutation,
 });
