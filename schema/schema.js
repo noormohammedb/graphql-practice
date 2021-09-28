@@ -20,7 +20,7 @@ const BookType = new GraphQLObjectType({
     // id: { type: GraphQLString },
     name: { type: GraphQLString },
     gener: { type: GraphQLString },
-    authorId: { type: GraphQLInt },
+    authorId: { type: GraphQLID },
     author: {
       type: AuthorType,
       resolve: (parent) => {
@@ -94,15 +94,37 @@ const Mutation = new GraphQLObjectType({
       args: {
         name: { type: GraphQLString },
         gener: { type: GraphQLString },
-        authorId: { type: GraphQLInt },
+        authorId: { type: GraphQLID },
       },
       resolve: async (parent, args) => {
         try {
-          const dbResult = await db.collection("book").insertOne({ ...args });
+          const dbResult = await db.collection("books").insertOne({ ...args });
           console.info("dbResult:", dbResult);
           return { ...args, id: dbResult.insertedId.toString() };
         } catch (dbInsertationError) {
           console.log("DB Insertation Error in Book Mutation");
+          console.error(dbInsertationError);
+          return new Error();
+        }
+      },
+    },
+    addAuthor: {
+      type: AuthorType,
+      args: {
+        id: { type: GraphQLID },
+        name: { type: GraphQLString },
+        age: { type: GraphQLInt },
+      },
+      resolve: async (parent, args) => {
+        console.info("args:", args);
+        try {
+          const dbResult = await db
+            .collection("authors")
+            .insertOne({ ...args });
+          console.info("dbResult:", dbResult);
+          return { ...args, id: dbResult.insertedId.toString() };
+        } catch (dbInsertationError) {
+          console.log("DB Insertation Error in Author Mutation");
           console.error(dbInsertationError);
           return new Error();
         }
