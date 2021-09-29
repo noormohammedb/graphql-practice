@@ -16,8 +16,6 @@ const BookType = new GraphQLObjectType({
   name: "Book",
   fields: () => ({
     id: { type: GraphQLID },
-    // id: { type: GraphQLInt },
-    // id: { type: GraphQLString },
     name: { type: GraphQLString },
     gener: { type: GraphQLString },
     authorId: { type: GraphQLID },
@@ -45,11 +43,9 @@ const AuthorType = new GraphQLObjectType({
   fields: () => ({
     id: { type: GraphQLID },
     name: { type: GraphQLString },
-    // age: { type: GraphQLInt },
     age: { type: GraphQLInt },
-    book: {
+    books: {
       type: new GraphQLList(BookType),
-      // type: BookType,
       resolve: async (parent) => {
         const bookFromDB = await db
           .collection("books")
@@ -74,8 +70,6 @@ const RootQuery = new GraphQLObjectType({
     book: {
       type: BookType,
       args: { id: { type: GraphQLID } },
-      // args: { id: { type: GraphQLInt } },
-      // args: { id: { type: GraphQLString } },
       resolve: async (parent, args) => {
         console.info("book Query args.id:", args.id, typeof args.id);
         const bookData = await db
@@ -94,7 +88,6 @@ const RootQuery = new GraphQLObjectType({
       type: new GraphQLList(BookType),
       resolve: async () => {
         console.info("Books Query");
-        // const booksFromDB = await db.collection("books").find({}).project({});
         const booksFromDB = await db.collection("books").find();
         const booksArray = await booksFromDB.toArray();
         const newBooksArray = booksArray.map((data) => ({
@@ -110,7 +103,6 @@ const RootQuery = new GraphQLObjectType({
       type: AuthorType,
       args: { id: { type: GraphQLID } },
       resolve: async (parent, args) => {
-        // authorData.find((iterator) => iterator.id == args.id),
         const authorFromDB = await db
           .collection("authors")
           .findOne({ _id: ObjectId(args.id) });
@@ -125,7 +117,6 @@ const RootQuery = new GraphQLObjectType({
     authors: {
       type: new GraphQLList(AuthorType),
       args: { id: { type: GraphQLID } },
-      // resolve: (parent, args) => authorData,
       resolve: async (parent, args) => {
         const authorsFromDB = await db.collection("authors").find();
         const authorsArray = await authorsFromDB.toArray();
@@ -134,7 +125,6 @@ const RootQuery = new GraphQLObjectType({
           name: data.name,
           age: data.age,
         }));
-
         return newAuthorsArray;
       },
     },
