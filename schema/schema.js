@@ -7,6 +7,7 @@ const {
   GraphQLObjectType,
   GraphQLList,
   GraphQLSchema,
+  GraphQLNonNull,
   GraphQLInt,
   GraphQLString,
   GraphQLID,
@@ -137,9 +138,9 @@ const Mutation = new GraphQLObjectType({
     addBook: {
       type: BookType,
       args: {
-        name: { type: GraphQLString },
-        gener: { type: GraphQLString },
-        authorId: { type: GraphQLID },
+        name: { type: GraphQLNonNull(GraphQLString) },
+        gener: { type: GraphQLNonNull(GraphQLString) },
+        authorId: { type: GraphQLNonNull(GraphQLID) },
       },
       resolve: async (parent, args) => {
         try {
@@ -156,9 +157,9 @@ const Mutation = new GraphQLObjectType({
     addAuthor: {
       type: AuthorType,
       args: {
-        id: { type: GraphQLID },
-        name: { type: GraphQLString },
-        age: { type: GraphQLInt },
+        // id: { type: GraphQLID },
+        name: { type: GraphQLNonNull(GraphQLString) },
+        age: { type: GraphQLNonNull(GraphQLInt) },
       },
       resolve: async (parent, args) => {
         console.info("args:", args);
