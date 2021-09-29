@@ -1,5 +1,5 @@
 const gql = require("graphql");
-const { BookData, authorData } = require("../Data.json");
+const { ObjectId } = require("mongodb");
 
 const { db } = require("../database");
 
@@ -23,9 +23,18 @@ const BookType = new GraphQLObjectType({
     authorId: { type: GraphQLID },
     author: {
       type: AuthorType,
-      resolve: (parent) => {
+      resolve: async (parent) => {
         console.info("Book Type author resolve parent:", parent);
-        return authorData.find((iterator) => parent.authorId == iterator.id);
+        const authorFromDB = await db
+          .collection("authors")
+          .findOne({ _id: ObjectId(parent.authorId) });
+        console.info("authorFromDB:", authorFromDB);
+
+        return {
+          id: authorFromDB._id.toString(),
+          name: authorFromDB.name,
+          age: authorFromDB.age,
+        };
       },
     },
   }),
@@ -41,10 +50,19 @@ const AuthorType = new GraphQLObjectType({
     book: {
       type: new GraphQLList(BookType),
       // type: BookType,
-      resolve: (parent) => {
-        return BookData.filter(
-          (BookIterator) => parent.id == BookIterator.authorId
-        );
+      resolve: async (parent) => {
+        const bookFromDB = await db
+          .collection("books")
+          .find({ authorId: parent.id })
+          .toArray();
+        console.info("bookFromDB:", bookFromDB);
+        const newBooksArray = bookFromDB.map((data) => ({
+          id: data._id.toString(),
+          name: data.name,
+          gener: data.gener,
+          authorId: data.authorId,
+        }));
+        return newBooksArray;
       },
     },
   }),
@@ -58,30 +76,67 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: GraphQLID } },
       // args: { id: { type: GraphQLInt } },
       // args: { id: { type: GraphQLString } },
-      resolve: (parent, args) => {
+      resolve: async (parent, args) => {
         console.info("book Query args.id:", args.id, typeof args.id);
-        const book = BookData.find((iterator) => iterator.id == args.id);
-        console.log(book);
-        return book;
+        const bookData = await db
+          .collection("books")
+          .findOne({ _id: ObjectId(args.id) });
+        console.info("bookData:", bookData);
+        return {
+          id: bookData._id.toString(),
+          name: bookData.name,
+          gener: bookData.gener,
+          authorId: bookData.authorId,
+        };
       },
     },
     books: {
       type: new GraphQLList(BookType),
-      resolve: () => {
-        console.info("Books Query", typeof BookData);
-        return BookData;
+      resolve: async () => {
+        console.info("Books Query");
+        // const booksFromDB = await db.collection("books").find({}).project({});
+        const booksFromDB = await db.collection("books").find();
+        const booksArray = await booksFromDB.toArray();
+        const newBooksArray = booksArray.map((data) => ({
+          id: data._id.toString(),
+          name: data.name,
+          gener: data.gener,
+          authorId: data.authorId,
+        }));
+        return newBooksArray;
       },
     },
     author: {
       type: AuthorType,
       args: { id: { type: GraphQLID } },
-      resolve: (parent, args) =>
-        authorData.find((iterator) => iterator.id == args.id),
+      resolve: async (parent, args) => {
+        // authorData.find((iterator) => iterator.id == args.id),
+        const authorFromDB = await db
+          .collection("authors")
+          .findOne({ _id: ObjectId(args.id) });
+        console.info("authorFromDB:", authorFromDB);
+        return {
+          id: authorFromDB._id.toString(),
+          name: authorFromDB.name,
+          age: authorFromDB.age,
+        };
+      },
     },
     authors: {
       type: new GraphQLList(AuthorType),
       args: { id: { type: GraphQLID } },
-      resolve: (parent, args) => authorData,
+      // resolve: (parent, args) => authorData,
+      resolve: async (parent, args) => {
+        const authorsFromDB = await db.collection("authors").find();
+        const authorsArray = await authorsFromDB.toArray();
+        const newAuthorsArray = authorsArray.map((data) => ({
+          id: data._id.toString(),
+          name: data.name,
+          age: data.age,
+        }));
+
+        return newAuthorsArray;
+      },
     },
   },
 });
